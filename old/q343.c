@@ -1,63 +1,68 @@
-#include<stdio.h>
-#include<string.h>
-#include<math.h>
+#include <stdio.h>
+#include <string.h>
+#define MAX 100
 
-#define NUM 50
-
-int handle(char *num)
+int mexp(int a, int b)
 {
-	int i, n = strlen(num);
-	int reg = 0;
-	
-	for(i = 1; i <= n; i++)
-		if(num[i-1] >= '0' && num[i-1] <= '9')
-			reg += (num[i-1] - '0') * pow(36, n-i);
-		else
-			reg += (num[i-1] - 'A' + 10) * pow(36, n-i);
-
-	return reg;			
+    return (!b)?1:a*mexp(a, b - 1);
 }
-void carry(int num, int _carry, char *str)
-{
-	int i;
 
-	if(_carry <= num)
-	{
-		carry((num - num % _carry)/_carry, _carry, str);
-		for(i = 0; str[i] != '\0';i++)
-			;
-		str[i] = (num % _carry)	+ '0';	
-	}
-	else
-		str[0] = num + '0';		
-} 	
+int iszero(char *str)
+{
+    return (str[0] == '0' && str[1] == 0)?0:1;
+}
+
+int stoi(char *str, int n)
+{
+    int i = 0, sum = 0, len = strlen(str);
+    
+    for(i = len - 1 ; i >= 0; i--)
+    {
+        if(str[i] >= '0' && str[i] <= '9')
+            sum += (str[i] - '0') * mexp(n, len - 1 - i);
+        else
+            sum += (str[i] - 'A' + 10) * mexp(n, len - 1 - i);
+    }
+
+    return sum;
+
+}
+
+int check(char *str, int n)
+{
+    int i, num;
+   
+    for(i = 0; str[i] != '\0'; i++)
+        if(str[i] >= '0' && str[i] <= '9')
+        {
+            if((str[i] - '0') >= n)
+                return 0;
+        }
+        else
+        {
+            if((str[i] - 'A' + 10) >= n)
+                return 0;
+        }
+
+    return 1;
+}
 int main()
 {
-	char num_x[NUM], num_y[NUM];
-	int inumx, inumy;
+    char sta[MAX], stb[MAX]; 
 
-	while(scanf("%s%s", num_x, num_y) != EOF)
-	{
-		char ax[40][NUM] = {0}, ay[40][NUM] = {0}; 
-		int i, j, flag = 0;
+    while(scanf("%s%s", sta, stb) != EOF)
+    {
+        int i, j, flag = 1;
 
-		inumx = handle(num_x);
-		inumy = handle(num_y);
-		for(i = 2; i <= 36; i++)
-		{
-			carry(inumx, i, ax[i]);
-			carry(inumy, i, ay[i]);
-		}
-		for(i = 2; i <= 36 && !flag; i++)
-			for(j = 2; j <= 36 && !flag; j++)
-				if(!strcmp(ax[i], ay[j]))
-					flag++;
-		i--;
-		if(flag)
-			printf("%s (base %d) = %s (base %d)\n", num_x, i, num_y, j);
-		else
-			printf("%s is not equal to %s in any base 2..36\n", num_x, num_y);
-	} 
+        for(i = 2; flag && i <= 36; i++)
+            for(j = 2; flag && j <= 36; j++)
+                if(check(sta, i) && check(stb, j) && (stoi(sta, i) == stoi(stb, j)))
+                    flag = 0;
+        if(flag)
+            printf("%s is not equal to %s in any base 2..36\n", sta, stb);
+        else
+            printf("%s (base %d) = %s (base %d)\n", sta, i-1, stb, j-1);
+    }
 
-	return 0;
+    return 0;
 }
