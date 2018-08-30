@@ -1,29 +1,24 @@
-#include<stdio.h>
-#define MAX 101
+#include <stdio.h>
+#include <string.h>
+#define MAX 110
 
 int main()
 {
-	char str[MAX][MAX] = {0};
-	int i = 0, n, j;
+    char str[MAX][MAX] = {};
+    int max = 0;
+    int n, i, j;
 
-	while(gets(str[i]) != NULL)
-		i++;
-	i-=1;
-	for(n = 0; n < MAX; n++)
-	{
-		char reg[MAX] = {0};
-		int flag = 0;
-		
-		for(j = i; j >= 0; j--)
-			reg[i-j] = str[j][n];
-		for(j = 0; j < i; j++)
-			if(reg[j] == '\0' || reg[j] == '\n')
-				reg[j] = ' ';
-			else
-				flag = 1;
-		if(flag)
-			printf("%s\n", reg);
-	}
+    for(n = 0; scanf("%[^\n]%*c", str[n]) != EOF; n++)
+        if(max < strlen(str[n]))
+            max = strlen(str[n]);
 
-	return 0;
+    for(i = 0; i < max; i++)
+    {
+        for(j = n-1; j >= 0; j--)
+            (!str[j][i])?printf(" "):printf("%c", str[j][i]);
+           
+        printf("\n");
+    }
+
+    return 0;
 }
