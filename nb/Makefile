@@ -1,2 +1,2 @@
 clean:
-	rm -f *.exe *.out 1 2
+	rm -f *.exe *.out *.stackdump
